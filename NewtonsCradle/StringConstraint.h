@@ -9,6 +9,7 @@ public:
 	StringConstraint(float length);
 	virtual ~StringConstraint();
 
+	// The first is the anchor point and the second is the mass
 	void setAttachments(PhysicalObject* obj0, PhysicalObject* obj1);
 
 	virtual void solveConstraint(const sf::Time &deltaTime) override;
@@ -18,8 +19,12 @@ public:
 
 
 private:
+	// The first is the anchor point and the second is the mass
 	PhysicalObject *attachments[2];
 	sf::VertexArray line;
 	float lineThickness;
 	float length;
+	float torque;
+	float L;
+	float orient;
 };

@@ -19,8 +19,8 @@ NewtonsCradleApplication::NewtonsCradleApplication()
 		ballTest[i]->setMass(BALL_MASS);
 		ballTest[i]->setRadius(BALL_RADIUS);
 		ballTest[i]->setPosition(100 + i * BALL_RADIUS * 2, 200);
-		ballTest[i]->setElasticity(1.0f);
-		//ballTest[i]->setApplyGravity(false);
+		ballTest[i]->setElasticity(.5f);
+		ballTest[i]->setApplyGravity(false);
 		physObjMan.addObject(ballTest[i]);
 
 		immovableObj[i] = new ImmovableObject(sf::Vector2f(100 + i * BALL_RADIUS * 2, 100));
@@ -30,7 +30,7 @@ NewtonsCradleApplication::NewtonsCradleApplication()
 	}
 
 	ballTest[0]->setPosition(50, 150);
-	//ballTest[0]->applyForce(VectorF(1000.0f, 0.0f));
+	//ballTest[0]->applyForce(VectorF(1500.0f, 0.0f));
 }
 
 NewtonsCradleApplication::~NewtonsCradleApplication()
@@ -76,11 +76,11 @@ void NewtonsCradleApplication::run()
 			ballTest2->move(0.0f, -50.0f * deltaTime.asSeconds());
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 			ballTest2->move(0.0f, 50.0f * deltaTime.asSeconds());*/
-		//////////////////////////////////
+			//////////////////////////////////
 
 		physObjMan.applyContinuousForces(deltaTime);
 		physObjMan.update(deltaTime);
-		physObjMan.resolveConstraints();
+		physObjMan.resolveConstraints(deltaTime);
 		physObjMan.checkForCollisions();
 		physObjMan.lateUpdate(deltaTime);
 		renderWin.clear();

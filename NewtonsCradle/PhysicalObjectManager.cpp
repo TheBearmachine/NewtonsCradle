@@ -58,7 +58,7 @@ void PhysicalObjectManager::resolveConstraints(const sf::Time &deltaTime)
 {
 	for (auto c : constraints)
 	{
-		c->solveConstraint();
+		c->solveConstraint(deltaTime);
 	}
 }
 
