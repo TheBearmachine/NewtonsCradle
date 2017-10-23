@@ -1,7 +1,8 @@
 #include "PhysicalObjectManager.h"
 #include "VectorRotation.h"
+#include "Constants.h"
 
-static const float GRAVITY_CONSTANT = 9.82f;
+// Increased gravity to compensate for the scale
 
 PhysicalObjectManager::PhysicalObjectManager() :
 	physObjects()
@@ -30,7 +31,7 @@ void PhysicalObjectManager::applyContinuousForces(const sf::Time &deltaTime)
 	for (auto po : physObjects)
 	{
 		if (po->getApplyGravity())
-			po->applyForce(VectorF(0.0f, po->getMass() * GRAVITY_CONSTANT * deltaTime.asSeconds()));
+			po->applyForce(VectorF(0.0f, po->getMass() * Constants::Gravity * deltaTime.asSeconds()));
 	}
 }
 
@@ -64,6 +65,8 @@ void PhysicalObjectManager::resolveConstraints(const sf::Time &deltaTime)
 
 void PhysicalObjectManager::checkForCollisions()
 {
+	// Do a two stage collision check using rectangles first and then circles
+	// (Probably overkill as circles and rectangles are fairly similar in computation usage).
 	PhysObjPairStack possibleCollisions = broadDetectionPhase();
 	narrowDetectionPhase(possibleCollisions);
 }
@@ -91,7 +94,7 @@ PhysicalObjectManager::PhysObjPairStack PhysicalObjectManager::broadDetectionPha
 		{
 			if (physObjects[i]->getBroadDetectionBox().intersects(physObjects[j]->getBroadDetectionBox()))
 			{
-				possibleCollisions.push(std::make_pair(physObjects[i], physObjects[j]));
+				possibleCollisions.push(std::make_pair(physObjects[i], physObjects[j])); // Pair up potential collisions
 			}
 		}
 	}
@@ -118,7 +121,6 @@ void PhysicalObjectManager::narrowDetectionPhase(PhysObjPairStack & physObjPairS
 
 			if (dxSq + dySq < radiusSq) // If true, there has been a collision
 			{
-				printf("Hey, there's a collision over here!\n");
 				// Find the direct of the collision
 				VectorF dir = VectorF::normalize(obj1->getPosition() - obj2->getPosition());
 				float elasticity = (obj1->getElasticity() + obj2->getElasticity()) / 2.0f;
@@ -138,6 +140,8 @@ void PhysicalObjectManager::narrowDetectionPhase(PhysObjPairStack & physObjPairS
 				obj1->setVelocity(vAfter1);
 				obj2->setVelocity(vAfter2);
 
+				// Do not move the colliding objects out of eachother here,
+				// but at a later stage to prevent new potential collisions popping up
 				obj1->onCollision(pen1);
 				obj2->onCollision(pen2);
 			}

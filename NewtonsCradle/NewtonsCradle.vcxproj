@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="ImmovableObject.h" />
     <ClInclude Include="PhysicalObjectManager.h" />

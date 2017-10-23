@@ -4,6 +4,7 @@
 
 constexpr double PI = 3.141592653589793238463;
 
+// Used to achieve rotation using complex vectors
 class VectorRotation
 {
 public:

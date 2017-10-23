@@ -22,6 +22,7 @@ public:
 	virtual ~PhysicalObject();
 
 	virtual void applyForce(const VectorF &force);
+	virtual VectorF getForces() const;
 	virtual void setPosition(const VectorF &pos);
 	virtual void setPosition(const float &x, const float &y);
 	virtual void move(const VectorF &offset);

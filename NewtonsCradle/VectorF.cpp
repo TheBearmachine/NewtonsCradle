@@ -26,6 +26,12 @@ sf::Vector2f VectorF::toSfVec()
 	return sf::Vector2f(x, y);
 }
 
+std::string VectorF::toString() const
+{
+	std::string str = "X: " + std::to_string(x) + ", Y: " + std::to_string(y);
+	return str;
+}
+
 float VectorF::magnitude() const
 {
 	return std::sqrtf(magnitudeSquared());

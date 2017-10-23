@@ -1,18 +1,17 @@
 #include "StringConstraint.h"
 #include "VectorRotation.h"
 #include <SFML/Graphics/RenderTarget.hpp>
-
-static const float GRAVITY_CONSTANT = 9.82f;
+#include "Constants.h"
 
 StringConstraint::StringConstraint(float length) :
-	length(length), attachments(), lineThickness(2.0f),
+	length(length), attachments(), lineThickness(1.0f),
 	orient(0.0f), torque(0.0f), L(0.0f)
 {
 	line.setPrimitiveType(sf::PrimitiveType::Quads);
 	line.resize(4);
 	for (size_t i = 0; i < 4; i++)
 	{
-		line[i].color = sf::Color::Green;
+		line[i].color = sf::Color(170, 170, 170);
 	}
 }
 
@@ -32,50 +31,34 @@ void StringConstraint::solveConstraint(const sf::Time &deltaTime)
 	if (attachments[0] == nullptr || attachments[1] == nullptr) return;
 
 	VectorF string = attachments[1]->getPosition() - attachments[0]->getPosition();
-	if (attachments[0]->getCollidableType() == PhysicalObject::CollidableType::ImmovableObject)
+	if (attachments[0]->getCollidableType() == PhysicalObject::CollidableType::ImmovableObject &&
+		string.magnitude() > length)
 	{
-		//float angle = VectorF::angleBetweenVectors(string, VectorF(0.0f, 1.0f)); // Angle between the string and the gravity vector
-		//if (angle > 90)
-		//	angle = VectorF::angleBetweenVectors(string, VectorF(0.0f, -1.0f));
-
 		VectorF dir = VectorF::normalize(string);
+
+		// Calculate tension on the string
+		float r = (attachments[1]->getPosition() - attachments[0]->getPosition()).magnitude();
+		float v = attachments[1]->getVelocity().magnitude();
+		float m = attachments[1]->getMass();
+		VectorF T = (dir * (m / 100.0f) * ( v * v) / r);
+		attachments[1]->applyForce(T * -1);
+
+		// The tension force wont quite counterbalance the motion out from the string length
+		// due to not considering the gravitational force, so we need to restrict the movement
+		// This will lead to a constant velocity downwards on particles suspended along the gravitational axis
 		attachments[1]->setPosition(attachments[0]->getPosition() + dir * length);
-
-		VectorF gForce(0.0f, GRAVITY_CONSTANT);
-
-		VectorF r = attachments[1]->getPosition() - attachments[0]->getPosition();
-		// Since i have no vector3 representation, this is an ugly cross product of only the z-component
-		float z = r.x * gForce.y - r.y * gForce.x;
-		float angularVelocity = attachments[1]->getInvertedMass() * L;
-		orient += angularVelocity * deltaTime.asSeconds();
-		torque += z;
-		L += torque * deltaTime.asSeconds();
-		torque = 0.0f;
-
-		// v1(0, 0, ang) X r
-		// v1.y * r.z - v1.z * v2.y
-		// v1.z * r.x - v1.x * r.z
-		VectorF finalVelocity = VectorF(-angularVelocity * r.y, angularVelocity * r.x);
-		attachments[1]->setVelocity(finalVelocity);
-
-		//VectorF vAfter0 = attachments[0]->getVelocity();
-		//VectorF vAfter1 = attachments[1]->getVelocity();
-
-		/*float extension = string.magnitude() - length;
-		VectorF pen1 = (dir * -extension).project(vBefore);*/
-
 	}
 }
 
 void StringConstraint::update(const sf::Time & deltaTime)
 {
+	// All this deos is update the coordinates used to draw the string
 	if (attachments[0] == nullptr || attachments[1] == nullptr) return;
 	VectorF newPos[4];
 	VectorRotation dir = VectorF::normalize(attachments[0]->getPosition() - attachments[1]->getPosition());
 	VectorRotation rot = VectorRotation::inDegrees(90);
 	dir = dir * rot;
 	rot = VectorRotation::inDegrees(180);
-
 
 	for (size_t i = 0; i < 2; i++)
 	{

@@ -12,7 +12,7 @@ Ball::Ball(VectorF pos, float radius) :
 	circleShape(radius)
 {
 	collidableType = CollidableType::Circle;
-	circleShape.setFillColor(sf::Color(125, 125, 125, 255));
+	circleShape.setFillColor(sf::Color(125, 125, 125));
 	offset.x = circleShape.getLocalBounds().width / 2.0f;
 	offset.y = circleShape.getLocalBounds().height / 2.0f;
 

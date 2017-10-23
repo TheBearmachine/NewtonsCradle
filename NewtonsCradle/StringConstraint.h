@@ -3,6 +3,8 @@
 #include "PhysicalObject.h"
 #include <SFML/Graphics/VertexArray.hpp>
 
+// Anchors two objects to eachother, currently only works
+// if the first is a immovable object and the second a ball
 class StringConstraint : public Constraint
 {
 public:
@@ -16,7 +18,6 @@ public:
 
 	virtual void update(const sf::Time &deltaTime) override;
 	virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override;
-
 
 private:
 	// The first is the anchor point and the second is the mass

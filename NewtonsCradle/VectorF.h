@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
+#include <string>
 
+// A 2D representation of a vector
 class VectorF
 {
 public:
@@ -10,6 +12,7 @@ public:
 	VectorF(const sf::Vector2f &v);
 
 	sf::Vector2f toSfVec();
+	std::string toString() const;
 
 	float magnitude() const;
 	float magnitudeSquared() const;

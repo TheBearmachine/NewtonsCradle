@@ -20,6 +20,11 @@ void PhysicalObject::applyForce(const VectorF & force)
 	forces += force;
 }
 
+VectorF PhysicalObject::getForces() const
+{
+	return forces;
+}
+
 void PhysicalObject::setPosition(const VectorF & pos)
 {
 	position = pos;
